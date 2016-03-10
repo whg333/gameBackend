@@ -1,0 +1,47 @@
+option java_package = "com.why.game.bo";
+option java_outer_classname = "BoProtocolBuffer";
+
+message AccountStateProto {
+  optional int64 frozenTime = 1;
+  optional bool isFrozen = 2;
+  optional int64 unfreezeTime = 3;
+  optional int32 abuseCount = 4;
+  optional bool isRead = 5;
+  optional int32 lastAbuseMinute = 6;
+  optional bool isBlackList = 7;
+  optional string  identifyingCode = 8;
+}
+
+message UserProto{
+	optional int64 id = 1;
+	optional string name = 2;
+	optional int32 rank = 3;
+	optional int32 gold = 4;
+}
+
+message LandsProto{
+	repeated LandProto landList = 1;
+}
+
+message LandProto{
+	optional int32 index = 1;
+	repeated SoilProto soilList = 2;
+}
+
+message SoilProto{
+	optional int32 index = 1;
+	optional bool isOpen = 2;
+	optional FlowerProto flower = 3;
+	optional int32 grass = 4;
+	optional int32 dry = 5;
+	optional int32 fertile = 6;
+}
+
+message FlowerProto{
+	optional int32 id = 1;
+	optional int32 xmlId = 2;
+	optional int64 growTime = 3;
+	optional int32 quality = 4;
+	optional int32 bug = 5;
+	optional int32 stage = 6;
+}

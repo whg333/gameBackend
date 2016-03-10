@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Flowers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Flowe>
+		<id>1</id>
+		<type>1</type>
+		<name>菊花</name>
+	</Flowe>
+	<Flowe>
+		<id>2</id>
+		<type>2</type>
+		<name>向日葵</name>
+	</Flowe>
+</Flowers>

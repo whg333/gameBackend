@@ -1,0 +1,186 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.hoolai</groupId>
+	<artifactId>huaTeng-backend</artifactId>
+	<packaging>jar</packaging>
+	<name>huaTeng backend application</name>
+	<parent>
+		<groupId>com.why</groupId>
+		<artifactId>why-game-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>${dir.name}/**</include>
+					<include>com/**</include>
+					<!-- <include>mappers/**</include> -->
+					<include>*</include>
+				</includes>
+			</resource>
+			<!-- 
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>mybatis-config.xml</include>
+				</includes>
+			</resource>
+			 -->
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>applicationContext.xml</include>
+					<include>com/**</include>
+					<!-- <include>mappers/**</include> -->
+					<include>*</include>
+				</includes>
+			</testResource>
+			<!-- 
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>mybatis-config.xml</include>
+				</includes>
+			</testResource>
+			 -->
+		</testResources>
+	</build>
+
+	<dependencies>
+		<!-- slf4j and junit -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- mysql jdbc driver & jdbc connection pool -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.34</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.1.2</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- springframework 4.0.7 RELEASE -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>4.0.7.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>4.0.7.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>4.0.7.RELEASE</version>
+		</dependency>
+		 
+		<!-- spring mvc -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>4.0.7.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- mybatis integration spring -->
+		<!-- 
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		 -->
+
+		<!-- process json with jackson jar package -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-lgpl</artifactId>
+			<version>1.9.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-lgpl</artifactId>
+			<version>1.9.6</version>
+		</dependency>
+
+		<!-- protobuf -->
+		<dependency>
+			<groupId>com.google.code</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>2.4.0a</version>
+		</dependency>
+
+		<!-- hoolai jar -->
+		<dependency>
+			<groupId>com.hoolai</groupId>
+			<artifactId>commons-platform-sdk</artifactId>
+			<version>0.0.6-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<!--
+		<dependency> 
+			<groupId>com.hoolai</groupId>
+			<artifactId>netty4_socket</artifactId>
+			<version>0.0.1-SNAPSHOT</version> 
+		</dependency>
+		-->
+		<dependency>
+			<groupId>com.hoolai</groupId>
+			<artifactId>memcached-jredis-extentions</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+
+	</dependencies>
+</project>
