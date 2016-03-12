@@ -64,6 +64,7 @@ public class HttpServiceCaller {
 		post2();
 	}
 	
+	/** 具体的httpclient的使用请参见http://blog.csdn.net/wangpeng047/article/details/19624529 */
 	private static void post() {  
         // 创建默认的httpClient实例.    
         CloseableHttpClient httpclient = HttpClients.createDefault();  
