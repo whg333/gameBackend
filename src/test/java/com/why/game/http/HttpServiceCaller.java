@@ -13,6 +13,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -27,13 +28,13 @@ import com.why.game.response.ResponseProtocolBuffer.TestProto;
 
 public class HttpServiceCaller {
 	
-	private static final long userId = 10004;
-	private static final String name = userId+"_uid";
+	private static final long userId = 10006;
 	private static final HttpService httpService = new HttpService();
 	
 	public static void main(String[] args) {
 		//testGetUserInfo();
-		testProtobuf();
+		//testProtobuf();
+		postProto();
 	}
 	
 	private static void testGetUserInfo(){
@@ -41,11 +42,11 @@ public class HttpServiceCaller {
 		System.out.println(authSecret.getValue());
 		final RequestProperty idf_c_key = new RequestProperty(AccountState.IDENTIFYING_CODE_KEY, "");
 		
-//		String url = "http://192.168.90.10:8077/huaTeng/userController/getUserInfo.ht?requestInfoStr={\"openid\":\"whg2\"}";
+//		String url = "http://192.168.90.10:8077/huaTeng/userController/getUserInfo.ht?requestInfoStr={\"openid\":\"whg3\"}";
 //		String response = httpService.doGet(url, authSecret, idf_c_key);
 //		System.out.println(response);
 		
-		String url = "http://192.168.90.10:8080/huaTeng/userController/rename.ht?userIdStr=10004&name=whg10004";
+		String url = "http://192.168.90.10:8080/huaTeng/userController/rename.ht?userIdStr="+userId+"&name=whg"+userId;
 //		String response = httpService.doGet(url, authSecret, idf_c_key);
 //		System.out.println(response);
 		
@@ -84,7 +85,7 @@ public class HttpServiceCaller {
                 
                 byte[] bytes = EntityUtils.toByteArray(entity);
                 printHex(bytes);
-                TestProto newTestProto = newTestProto(name+"-111");
+                TestProto newTestProto = newTestProto();
     			byte[] bytes2 = newTestProto.toByteArray();
     			printHex(bytes2);
     			
@@ -137,7 +138,62 @@ public class HttpServiceCaller {
                 
                 byte[] bytes = EntityUtils.toByteArray(entity);
                 printHex(bytes);
-                TestProto newTestProto = newTestProto(name+"-222");
+                TestProto newTestProto = newTestProto();
+    			byte[] bytes2 = newTestProto.toByteArray();
+    			printHex(bytes2);
+    			
+    			System.out.println();
+    			printTestProto("testProto=", bytes2);
+    			printTestProto("response=", bytes);
+                
+//                if (entity != null) {  
+//                    System.out.println("--------------------------------------");  
+//                    System.out.println("Response content: " + EntityUtils.toString(entity, "UTF-8"));  
+//                    System.out.println("--------------------------------------");  
+//                }  
+            } finally {  
+                response.close();  
+            }  
+        } catch (ClientProtocolException e) {  
+            e.printStackTrace();  
+        } catch (UnsupportedEncodingException e1) {  
+            e1.printStackTrace();  
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        } finally {  
+            // 关闭连接,释放资源    
+            try {  
+                httpclient.close();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            }  
+        }  
+    }  
+	
+	private static void postProto() {  
+        // 创建默认的httpClient实例.    
+        CloseableHttpClient httpclient = HttpClients.createDefault();  
+        // 创建httppost    
+        HttpPost httppost = new HttpPost("http://192.168.90.10:8080/huaTeng/testController/protobuf3.proto");  
+        httppost.addHeader("Content-Type","application/x-protobuf");
+        httppost.addHeader("Accept", "application/x-protobuf");
+        
+        // 创建参数队列 ，下面这个有点绕，显示创建input流读入byte数组数据，才setEntity
+        //其实可以直接使用ByteArrayEntity，就像下面所示的
+        //ByteArrayInputStream inputStream = new ByteArrayInputStream(newTestProto().toByteArray());
+        //InputStreamEntity inputStreamEntity = new InputStreamEntity(inputStream);
+        
+        try {  
+            //httppost.setEntity(inputStreamEntity);  
+            httppost.setEntity(new ByteArrayEntity(newTestProto().toByteArray()));  
+            System.out.println("executing request " + httppost.getURI());  
+            CloseableHttpResponse response = httpclient.execute(httppost);  
+            try {  
+                HttpEntity entity = response.getEntity();  
+                
+                byte[] bytes = EntityUtils.toByteArray(entity);
+                printHex(bytes);
+                TestProto newTestProto = newTestProto();
     			byte[] bytes2 = newTestProto.toByteArray();
     			printHex(bytes2);
     			
@@ -184,24 +240,6 @@ public class HttpServiceCaller {
 		public void run() {
 			String response = httpService.doGet(url, authSecret, idf_c_key);
 			System.out.println(response);
-			System.out.println();
-			
-			TestProto newTestProto = newTestProto(name);
-			byte[] bytes2 = newTestProto.toByteArray();
-			printHex(bytes2);
-			
-			String response2 = new String(bytes2);
-			printHex(response2.getBytes());
-			printTestProto("String testProto2=", response2.getBytes());
-			
-			printProtoStr(response2);
-			printTestProto("testProto2=", newTestProto.toByteArray());
-			
-			System.out.println();
-			printHex(response.getBytes());
-			printProtoStr(response);
-			
-			printTestProto("testProto=", response.getBytes());
 		}
 	}
 	
@@ -218,14 +256,14 @@ public class HttpServiceCaller {
 		}
 	}
 	
-	public static TestProto newTestProto(String name){
+	public static TestProto newTestProto(){
 		TestProto.Builder builder = TestProto.newBuilder();
 		builder.setId(414748264923L);
-		builder.setName(name);
-		builder.setRank(512);
+		builder.setName("testProtobuf_whg333444");
+		builder.setRank(128);
 		builder.setGold(1078);
 		builder.setExp(999);
-		builder.setDiamond(1024);
+		builder.setDiamond(222);
 		return builder.build();
 	}
 	
