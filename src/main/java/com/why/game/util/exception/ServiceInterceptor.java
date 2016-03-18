@@ -9,8 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,17 +24,17 @@ import com.why.game.util.operation.HttpHeaderContext;
 import com.why.game.util.operation.OperationContext;
 
 /**
- * responsibility.<br><br>
- * 
- * 已经使用ServiceInterceptor替换掉了
- * 
- * @author Joseph
- * 
+ * <p>
+ * 描述：把之前基于xml配置的ExceptionHandler改为使用@Aspect注解形式的Spring AOP。<br>
+ * 如此一来在@Around里面配置了只针对XxxService的public方法且返回值为Map<String, Object>的作切面拦截，并过滤掉XxxDomainService的方法
+ * </p>
+ * @author whg
+ * @date 2016-3-18 下午02:57:32
  */
-@Deprecated
-public class ExceptionHandler implements MethodInterceptor {
+@Aspect
+public class ServiceInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServiceInterceptor.class);
 
     public static boolean isStatistical = false;
 
@@ -64,35 +65,14 @@ public class ExceptionHandler implements MethodInterceptor {
     	perInterfaceUsedTime.clear();
     	perInterfaceUsedMTime.clear();
     }
-
-    private void addStatis(String serviceMethodName, long ntime, long mtime) {
-        //if(mtime > 1000000) return;
-        
-        AtomicLong count = perInterfaceReqCount.get(serviceMethodName);
-        AtomicLong nUsedTime = perInterfaceUsedTime.get(serviceMethodName);
-        AtomicLong mUsedTime = perInterfaceUsedMTime.get(serviceMethodName);
-
-        if (count == null) {
-            count = new AtomicLong(0);
-            perInterfaceReqCount.putIfAbsent(serviceMethodName, count);
-            nUsedTime = new AtomicLong(0);
-            perInterfaceUsedTime.putIfAbsent(serviceMethodName, nUsedTime);
-            mUsedTime = new AtomicLong(0);
-            perInterfaceUsedMTime.putIfAbsent(serviceMethodName, mUsedTime);
-        }
-
-        count.incrementAndGet();
-        nUsedTime.addAndGet(ntime);
-        mUsedTime.addAndGet(mtime);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        String serviceMethodName = null;
+	
+	@SuppressWarnings("unchecked")
+	@Around("execution(public java.util.Map<String, Object> com.why.game.service.impl.*.*(..)) and !execution(* com.why.game.service.impl.*DomainService*.*(..))")
+	public Object around(ProceedingJoinPoint invocation) throws Throwable{
+		String serviceMethodName = null;
         long start = 0;
         long ms = 0;
-        //logger.info("ExceptionHandler invoke...");
+        logger.info("ServiceInterceptor around...");
         if (isStatistical) {
             ms = TimeUtil.currentTimeMillis();
             start = System.nanoTime();
@@ -132,14 +112,35 @@ public class ExceptionHandler implements MethodInterceptor {
                 addStatis(serviceMethodName, System.nanoTime() - start, TimeUtil.currentTimeMillis() - ms);
             }
         }
-    }
-    
-    private String serviceMethodName(MethodInvocation invocation){
-    	String methodName = invocation.getMethod().getName();
+	}
+	
+	private String serviceMethodName(ProceedingJoinPoint invocation){
+    	String methodName = invocation.getSignature().getName();
         Object service = invocation.getThis();
         String serviceName = service.toString();
         serviceName = serviceName.substring(serviceName.lastIndexOf(".")+1, serviceName.indexOf("@"));
         return serviceName+"."+methodName;
     }
+	
+    private void addStatis(String serviceMethodName, long ntime, long mtime) {
+        //if(mtime > 1000000) return;
+        
+        AtomicLong count = perInterfaceReqCount.get(serviceMethodName);
+        AtomicLong nUsedTime = perInterfaceUsedTime.get(serviceMethodName);
+        AtomicLong mUsedTime = perInterfaceUsedMTime.get(serviceMethodName);
 
+        if (count == null) {
+            count = new AtomicLong(0);
+            perInterfaceReqCount.putIfAbsent(serviceMethodName, count);
+            nUsedTime = new AtomicLong(0);
+            perInterfaceUsedTime.putIfAbsent(serviceMethodName, nUsedTime);
+            mUsedTime = new AtomicLong(0);
+            perInterfaceUsedMTime.putIfAbsent(serviceMethodName, mUsedTime);
+        }
+
+        count.incrementAndGet();
+        nUsedTime.addAndGet(ntime);
+        mUsedTime.addAndGet(mtime);
+    }
+	
 }
